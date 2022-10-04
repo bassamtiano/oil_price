@@ -1,6 +1,8 @@
 import pandas as pd
 import sys
 
+import statsmodels.formula.api as smf
+
 class helo():
     def test(self):
         print('hello')
@@ -96,7 +98,13 @@ def preprocess():
     datasets["harga_bbm"] = datasets["harga_bbm"].apply(lambda x: f"{repair_digit_harga_bbm(x)}")
     datasets["harga_bbm"] = pd.to_numeric(datasets["harga_bbm"])
 
-    print(datasets)
+    data_bbm = datasets["harga_bbm"]
+    print(data_bbm)
+
+    # model = smf.ols(formula = 'diff ~ lag_1 + lag_2 + lag_3 + lag_4 + lag_5 + lag_6 + lag_7 + lag_8 + lag_9 + lag_10 + lag_11 + lag_12', data = data_supervised)
+    # model_fit = model.fit()
+
+    
 
 if __name__ == '__main__':
     # Memanggil method di class
