@@ -13,10 +13,13 @@ class Predictor(nn.Module):
             hidden_size = hidden_size,
             num_layer = num_layer)
         
+        self.activation = nn.Tanh()
+        
 
     def forward(self, x1, x2):
         h1 = self.l1(x1)
         h2 = self.l2(x2)
 
         h = torch.cat((h1, h2), axis=1)
+
         

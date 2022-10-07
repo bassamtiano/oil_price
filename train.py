@@ -109,7 +109,6 @@ def preprocess():
 
     data_bbm = datasets[["tahun", "bulan", "harga_bbm"]]
     data_beras = datasets[["tahun", "bulan", "harga_beras"]]
-    
 
     data_beras["prev_harga_beras"] = data_beras["harga_beras"].shift(1)
     data_bbm["prev_harga_bbm"] = data_bbm["harga_bbm"].shift(1)
@@ -131,13 +130,31 @@ def preprocess():
     regression_adj_rsq_beras = model_beras_fit.rsquared_adj
     regression_adj_rsq_bbm = model_bbm_fit.rsquared_adj
 
-    # dataset_beras = data_beras.drop()
-
-    # train_set = data_beras[0: -6].values
-    # test_set = data_beras[-6:].values
     print(data_beras)
 
-    
+    # dataset_beras = data_beras.drop()
+
+    train_set = data_beras[0: -6].values
+    test_set = data_beras[-6:].values
+    scaler = MinMaxScaler(feature_range=(-1, 1))
+    scaler = scaler.fit(train_set)
+
+    train_set = train_set.reshape(train_set.shape[0], train_set.shape[1])
+    train_set_scaled = scaler.transform(train_set)
+
+    test_set = test_set.reshape(test_set.shape[0], test_set.shape[1])
+    test_set_scaled = scaler.transform(test_set)
+
+    x_train, y_train = train_set_scaled[:, 1:], train_set_scaled[:, 0:1]
+    x_train = x_train.reshape(x_train.shape[0], 1, x_train.shape[1])
+
+    x_test, y_test = test_set_scaled[:, 1:], test_set_scaled[:, 0:1]
+    x_test = x_test.reshape(x_test.shape[0], 1, x_test.shape[1])
+
+    x_train, y_train = torch.from_numpy(x_train).float(), torch.from_numpy(y_train).float()
+    x_test, y_test = torch.from_numpy(x_test).float(), torch.from_numpy(y_test).float()
+
+    return x_train, y_train, x_test, y_test, scaler, train_set_scaled, test_set_scaled
 
 if __name__ == '__main__':
     # Memanggil method di class
@@ -145,5 +162,5 @@ if __name__ == '__main__':
     h.test()
 
     # Memanggil method
-    preprocess()
+    x_train, y_train, x_test, y_test, scaler, train_set_scaled, test_set_scaled = preprocess()
 
