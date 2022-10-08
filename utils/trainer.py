@@ -2,7 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+import numpy as np
+
 import pytorch_lightning as pl
+
+from sklearn.preprocessing import MinMaxScaler
 
 from models.predictor import Predictor
 
@@ -55,7 +59,17 @@ class TrainerHarga(pl.LightningModule):
         output = self.model(x, h)
         
         dist = self.calc_accuracy(output, y)
-        self.log("dist", dist, prog_bar = True)
+        max_val = max(dist)
+
+        scaler_acc = MinMaxScaler(feature_range = (0, 100))
+        scaler_acc = scaler_acc.fit(dist)
+
+        acc = scaler_acc.transform(dist)
+        
+        acc = np.mean(acc)
+
+        self.log("Distance", dist, prog_bar = True)
+        self.log("Accuracy", dist, prog_bar = True)
 
         loss = F.mse_loss(output, y.squeze())
 
