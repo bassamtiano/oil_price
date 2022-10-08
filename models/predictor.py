@@ -19,10 +19,14 @@ class Predictor(nn.Module):
         self.activation = nn.Tanh()
         
 
-    def forward(self, x_bbm, x_beras):
-        output, hidden = self.l1(x_bbm)
+    def forward(self, x_bbm, h, x_beras):
+        # Model LSTM
+        output, hidden = self.l1(x_bbm, h)
+        # Menghilangkan repetitifness / kemonotonan
         output = self.dropout(output)
+        # Activation function
         output = self.tanh(output)
+        # Resize output ke size target (label / sentiment)
         output = self.linear(output).squeeze()
 
         # output atau y-pred
