@@ -8,18 +8,23 @@ class Predictor(nn.Module):
             input_size = input_size,
             hidden_size = hidden_size,
             num_layer = num_layer)
-        self.l2 = nn.LSTM(
-            input_size = input_size,
-            hidden_size = hidden_size,
-            num_layer = num_layer)
+        
+        self.linear = nn.Linear(hidden_size, 3)
+        self.dropout = nn.Dropout()
+        # self.l2 = nn.LSTM(
+        #     input_size = input_size,
+        #     hidden_size = hidden_size,
+        #     num_layer = num_layer)
         
         self.activation = nn.Tanh()
         
 
-    def forward(self, x1, x2):
-        h1 = self.l1(x1)
-        h2 = self.l2(x2)
+    def forward(self, x_bbm, x_beras):
+        output, hidden = self.l1(x_bbm)
+        output = self.dropout(output)
+        output = self.tanh(output)
+        output = self.linear(output).squeeze()
 
-        h = torch.cat((h1, h2), axis=1)
-
+        # output atau y-pred
+        return output
         
