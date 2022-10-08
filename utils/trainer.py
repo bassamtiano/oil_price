@@ -32,9 +32,17 @@ class TrainerHarga(pl.LightningModule):
         optimizer = torch.optim.Adam()
         return optimizer
 
+    # Menghitung jarak antara nilai hasil prediksi dengan nilai asli / kenyataan
     def calc_accuracy(self, pred, truth):
+        # Menghitung rata rata
         dist = torch.mean(abs(pred) - abs(truth.squeeze()))
+        # abs(pred) - abs(truth) nya di kurangi menggunakan operasi pengurangan matrix
+        # torch.mean merata-ratakan hasil pengurangan operasi matrix
+
+       # Karena trainer di training menggunakan gpu, agar dapat di tampilkan di log harus di pindahkan ke cpu
         dist = dist.detach().cpu()
+
+        # konversi tensor matrix ke list
         dist = dist.tolist()
         return dist
 
